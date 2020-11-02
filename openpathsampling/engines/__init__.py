@@ -14,3 +14,5 @@ from .external_engine import ExternalEngine
 from . import external_snapshots
 
 from . import gromacs
+
+from . import sharc

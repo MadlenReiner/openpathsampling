@@ -171,6 +171,7 @@ from openpathsampling.engines import Trajectory, BaseSnapshot
 # until engines are proper subpackages, built-ins need to be findable!
 import openpathsampling.engines.openmm #as openmm
 import openpathsampling.engines.toy #as toy
+import openpathsampling.engines.sharc
 
 
 def git_HEAD():  # pragma: no cover
