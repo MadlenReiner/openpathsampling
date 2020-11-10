@@ -170,8 +170,18 @@ class SharcEngine(DynamicsEngine):
         f.close()
         
         #copy restart.traj to restart_tmax.traj
-        os.system("cp "+path_to_files+"restart.traj "+path_to_files \
-                  +"restart_"+'{:000000000010d}'.format(tmax)+".traj")
+        # os.system("cp "+path_to_files+"restart.traj "+path_to_files \
+        #           +"restart_"+'{:000000000010d}'.format(tmax)+".traj")
+        
+        if os.path.exists("check.current_snapshot.getter"):
+            pass
+        else:
+            #copy restart.traj to the end of restart_files.traj
+            restart_files = open(path_to_files+"restart_files.traj", 'a')
+            restart = open(path_to_files+"restart.traj", 'r')
+            restart_files.write(restart.read())
+            # create check file
+            os.system("touch check.current_snapshot.getter")        
         
         return SharcSnapshot(
             coordinates=np.array(positions),
@@ -204,9 +214,13 @@ class SharcEngine(DynamicsEngine):
         tmax = snap.tmax
         vels = snap.velocities
         
-        os.system("cp "+path_to_files+"restart_" \
-                  +'{:000000000010d}'.format(tmax)+".traj " \
-                  +path_to_files+"restart.traj")
+        # os.system("cp "+path_to_files+"restart_" \
+        #           +'{:000000000010d}'.format(tmax)+".traj " \
+        #           +path_to_files+"restart.traj")
+        restart_length = len(open(path_to_files+"restart.traj", 'r').readlines())
+        first = restart_length*tmax + 1
+        last = restart_length*tmax + restart_length
+        os.system(r"awk 'NR>"+str(last)+r"{exit}NR>="+str(first)+r"{print $0 > "+r'"restart.traj"'+r"}' restart_files.traj")
         
         # modify restart.traj with parameters from OPS
         f = open(path_to_files+"restart.traj", 'r')
@@ -254,18 +268,20 @@ class SharcEngine(DynamicsEngine):
         f = open(path_to_files+"restart.ctrl", 'r')
         lines = f.readlines()
         tmax = np.int(lines[8])
-        lines[8] = "{:12d}\n".format(tmax+self.n_steps_per_frame)
+        lines[8] = "{:12d}\n".format(tmax+1)
         f.close()
         f = open(path_to_files+"restart.ctrl", 'w')
         f.writelines(lines)
         f.close()
         f = open(path_to_files+"restart.traj", 'r')
         lines = f.readlines()
-        lines[6] = "{:12d}\n".format(tmax)
+        lines[6] = "{:12d}\n".format(tmax+1-self.n_steps_per_frame)
         f.close()
         f = open(path_to_files+"restart.traj", 'w')
         f.writelines(lines)
         f.close()
+        
+        os.system("rm -f check.current_snapshot.getter")
         
         os.system("sh run.sh")
         
