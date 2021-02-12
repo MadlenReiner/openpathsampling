@@ -402,7 +402,7 @@ class PathMover(with_metaclass(abc.ABCMeta, TreeMixin, StorableNamedObject)):
         return legal_samples
 
     @staticmethod
-    def select_sample(sample_set, ensembles=None, replicas=None):
+    def select_sample(sample_set, ensembles=None, replicas='all'): # MR changed
         """
         Returns one of the legal samples given self.replica and the ensemble
         set in ensembles.

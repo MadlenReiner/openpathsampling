@@ -108,7 +108,8 @@ from .pathmover import (
 
 from .pathsimulators import (
     PathSimulator, FullBootstrapping, Bootstrapping, PathSampling, MCStep,
-    CommittorSimulation, DirectSimulation, ShootFromSnapshotsSimulation
+    CommittorSimulation, DirectSimulation, ShootFromSnapshotsSimulation,
+    ForwardFluxSimulation
 )
 
 from .sample import Sample, SampleSet
